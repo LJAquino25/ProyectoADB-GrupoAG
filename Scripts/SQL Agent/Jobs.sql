@@ -19,7 +19,7 @@ EXEC sp_add_job
 GO
 EXEC sp_add_jobstep
     @job_name = N'Backup completo',
-    @step_name = N'Ejecutar Backup',
+    @step_name = N'Ejecutar Backup Completo',
     @subsystem = N'TSQL',
     @command = N'
     DECLARE @FileName VARCHAR(255);
@@ -54,7 +54,7 @@ EXEC sp_add_job
 GO
 EXEC sp_add_jobstep
     @job_name = N'Backup Diferencial',
-    @step_name = N'Ejecutar Backup',
+    @step_name = N'Ejecutar Backup Diferencial',
     @subsystem = N'TSQL',
     @command = N'
     DECLARE @FileName VARCHAR(255);
@@ -88,7 +88,7 @@ EXEC sp_add_job
 GO
 EXEC sp_add_jobstep
     @job_name = N'Backup Incremental',
-    @step_name = N'Ejecutar Backup',
+    @step_name = N'Ejecutar Backup Incremental',
     @subsystem = N'TSQL',
     @command = N'
     DECLARE @FileName VARCHAR(255);
