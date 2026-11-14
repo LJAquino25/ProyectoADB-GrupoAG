@@ -1,7 +1,7 @@
 -- Índices 
 
 -- Consulta de préstamos por mes
-use gestion_biblioteca_prueba;
+use gestion_biblioteca;
 go
 
 set statistics io on;
@@ -10,7 +10,7 @@ set statistics time on;
 select
     month(fecha_prestamo) as numero_mes,
     count(*) as total_prestamos
-from dbo.Prestamo
+from transacciones.Prestamo
 where fecha_prestamo >= '2026-01-01'
   and fecha_prestamo < '2027-01-01'
 group by month(fecha_prestamo)
@@ -27,7 +27,7 @@ set statistics time on;
 select top (10)
     id_socio,
     count(*) as total_prestamos
-from dbo.Prestamo
+from transacciones.Prestamo
 group by id_socio
 order by total_prestamos desc, id_socio;
 
@@ -45,7 +45,7 @@ select
     dias_retraso,
     monto_total,
     estado_pago
-from dbo.Multa
+from transacciones.Multa
 where estado_pago = 'Pendiente';
 
 set statistics io off;
@@ -54,25 +54,25 @@ set statistics time off;
 
 -- Creación de los ínidces 
 
-use gestion_biblioteca_prueba;
+use gestion_biblioteca;
 go
 
 
 -- Para prestamo por mes 
 create nonclustered index ix_prestamo_fecha
-on dbo.Prestamo (fecha_prestamo)
+on transacciones.Prestamo (fecha_prestamo)
 include (id_socio, id_ejemplar, fecha_limite);
 go
 
 
 -- Top 10 socios con más prestamos 
 create nonclustered index ix_prestamo_ranking_socios
-on dbo.Prestamo (id_socio);
+on transacciones.Prestamo (id_socio);
 
 
 -- Multas pendinetes de pagar 
 create nonclustered index ix_multa_estado_pago
-on dbo.Multa (estado_pago)
+on transacciones.Multa (estado_pago)
 include (id_prestamo, dias_retraso, monto_total);
 go
 

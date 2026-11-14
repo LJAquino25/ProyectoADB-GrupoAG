@@ -5,9 +5,9 @@ use gestion_biblioteca;
 go
 
 
-if object_id('dbo.auditoria_biblioteca', 'U') is null
+if object_id('audit.auditoria_biblioteca', 'U') is null
 begin
-create table dbo.auditoria_biblioteca (
+create table audit.auditoria_biblioteca (
     id_auditoria bigint identity(1,1) primary key,
     tabla_afectada varchar(100) not null,
     tipo_operacion varchar(10) not null,
@@ -30,14 +30,14 @@ go
 use gestion_biblioteca;
 go
 
-create or alter trigger dbo.tr_auditoria_prestamo
-on dbo.prestamo
+create or alter trigger transacciones.tr_auditoria_prestamo
+on transacciones.prestamo
 after insert, update, delete
 as
 begin
     set nocount on;
 
-    insert into dbo.auditoria_biblioteca (
+    insert into audit.auditoria_biblioteca (
         tabla_afectada,
         tipo_operacion,
         registro_afectado,
@@ -86,14 +86,14 @@ go
 
 
 --Trigger para socios
-create or alter trigger dbo.tr_auditoria_socio
-on dbo.socio
+create or alter trigger usuarios.tr_auditoria_socio
+on usuarios.socio
 after insert, update, delete
 as
 begin
     set nocount on;
 
-    insert into dbo.auditoria_biblioteca (
+    insert into audit.auditoria_biblioteca (
         tabla_afectada,
         tipo_operacion,
         registro_afectado,
@@ -131,14 +131,14 @@ go
 
 
 --Trigger para libros
-create or alter trigger dbo.tr_auditoria_libro
-on dbo.libro
+create or alter trigger catalogo.tr_auditoria_libro
+on catalogo.libro
 after insert, update, delete
 as
 begin
     set nocount on;
 
-    insert into dbo.auditoria_biblioteca (
+    insert into audit.auditoria_biblioteca (
         tabla_afectada,
         tipo_operacion,
         registro_afectado,
@@ -176,14 +176,14 @@ go
 
 
 --Trigger para multas
-create or alter trigger dbo.tr_auditoria_multa
-on dbo.multa
+create or alter trigger transacciones.tr_auditoria_multa
+on transacciones.multa
 after insert, update, delete
 as
 begin
     set nocount on;
 
-    insert into dbo.auditoria_biblioteca (
+    insert into audit.auditoria_biblioteca (
         tabla_afectada,
         tipo_operacion,
         registro_afectado,

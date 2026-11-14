@@ -17,7 +17,7 @@ dbo.Multa - transacciones
 dbo.Prestamo - transacciones
 dbo.Tarifa_multa - transacciones
 */
-
+CREATE SCHEMA audit
 CREATE SCHEMA catalogo
 CREATE SCHEMA usuarios
 CREATE SCHEMA transacciones
@@ -35,3 +35,5 @@ ALTER SCHEMA usuarios TRANSFER dbo.Socio
 ALTER SCHEMA transacciones TRANSFER dbo.Multa
 ALTER SCHEMA transacciones TRANSFER dbo.Prestamo
 ALTER SCHEMA transacciones TRANSFER dbo.Tarifa_multa
+
+DROP SCHEMA audit 
