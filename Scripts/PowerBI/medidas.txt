@@ -1,0 +1,126 @@
+MEDIDAS DAX - DASHBOARD GESTIÓN DE BIBLIOTECA (Power BI, DirectQuery)
+=====================================================================
+CONSULTA 1 - Préstamos por mes
+Vista: dbo.vw_prestamos_por_mes | Tabla: 'Prestamos por Mes'
+=====================================================================
+
+-- Columna calculada (ordenar por numero_mes)
+Mes = 
+SWITCH (
+    'Prestamos por Mes'[numero_mes];
+    1; "Enero";
+    2; "Febrero";
+    3; "Marzo";
+    4; "Abril";
+    5; "Mayo";
+    6; "Junio";
+    7; "Julio";
+    8; "Agosto";
+    9; "Septiembre";
+    10; "Octubre";
+    11; "Noviembre";
+    12; "Diciembre"
+)
+
+Total Préstamos = 
+SUM ( 'Prestamos por Mes'[total_prestamos] )
+
+Total Préstamos 2026 = 
+SUM ( 'Prestamos por Mes'[total_prestamos] )
+
+Promedio Mensual = 
+AVERAGEX (
+    VALUES ( 'Prestamos por Mes'[numero_mes] );
+    [Total Préstamos]
+)
+
+Mes con Más Préstamos = 
+VAR _tabla =
+    ADDCOLUMNS (
+        VALUES ( 'Prestamos por Mes'[Mes] );
+        "@total"; [Total Préstamos]
+    )
+VAR _max = MAXX ( _tabla; [@total] )
+RETURN
+    MAXX ( FILTER ( _tabla; [@total] = _max ); 'Prestamos por Mes'[Mes] )
+
+Mes con Menos Préstamos = 
+VAR _tabla =
+    ADDCOLUMNS (
+        VALUES ( 'Prestamos por Mes'[Mes] );
+        "@total"; [Total Préstamos]
+    )
+VAR _min = MINX ( _tabla; [@total] )
+RETURN
+    MAXX ( FILTER ( _tabla; [@total] = _min ); 'Prestamos por Mes'[Mes] )
+
+
+=====================================================================
+CONSULTA 2 - Top 10 socios con más préstamos
+Vista: dbo.vw_top10_socios | Tabla: 'Top 10 Socios'
+=====================================================================
+
+Préstamos por Socio = 
+SUM ( 'Top 10 Socios'[total_prestamos] )
+
+Total Top 10 = 
+CALCULATE ( [Préstamos por Socio]; ALL ( 'Top 10 Socios' ) )
+
+Promedio Top 10 = 
+AVERAGEX (
+    ALL ( 'Top 10 Socios'[id_socio] );
+    [Préstamos por Socio]
+)
+
+% del Top 10 = 
+DIVIDE ( [Préstamos por Socio]; [Total Top 10] )
+
+Ranking = 
+IF (
+    HASONEVALUE ( 'Top 10 Socios'[nombre] );
+    RANKX ( ALL ( 'Top 10 Socios' ); [Préstamos por Socio]; ; DESC; DENSE )
+)
+
+Mayor socio = 
+VAR _tabla =
+    ADDCOLUMNS (
+        ALL ( 'Top 10 Socios'[nombre] );
+        "@total"; [Préstamos por Socio]
+    )
+VAR _max = MAXX ( _tabla; [@total] )
+RETURN
+    MAXX ( FILTER ( _tabla; [@total] = _max ); 'Top 10 Socios'[nombre] )
+
+
+=====================================================================
+CONSULTA 3 - Multas pendientes de pago
+Vista: dbo.vw_multas_pendientes | Tabla: 'Multas Pendientes'
+(rango_retraso se ordena por orden_rango)
+=====================================================================
+
+Total Multas Pendientes = 
+COUNTROWS ( 'Multas Pendientes' )
+
+Monto Pendiente = 
+SUM ( 'Multas Pendientes'[monto_total] )
+
+Promedio Días Retraso = 
+AVERAGE ( 'Multas Pendientes'[dias_retraso] )
+
+Mayor Multa = 
+MAX ( 'Multas Pendientes'[monto_total] )
+
+Monto Promedio por Multa = 
+DIVIDE ( [Monto Pendiente]; [Total Multas Pendientes] )
+
+Multas Más de 60 Días = 
+CALCULATE (
+    [Total Multas Pendientes];
+    'Multas Pendientes'[dias_retraso] > 60
+)
+
+% del Monto Pendiente = 
+DIVIDE (
+    [Monto Pendiente];
+    CALCULATE ( [Monto Pendiente]; ALL ( 'Multas Pendientes' ) )
+)
